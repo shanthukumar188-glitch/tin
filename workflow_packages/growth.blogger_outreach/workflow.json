@@ -1,0 +1,37 @@
+{
+  "package_format": "tin-workflow-package-v1",
+  "definition": {
+    "key": "growth.blogger_outreach",
+    "title": "Blogger & media outreach shortlist",
+    "description": "Find and prioritize bloggers, writers, and podcasts who cover topics related to your product, and produce a ready-to-use outreach shortlist with suggested messages.",
+    "version": "1.0.0",
+    "executor": "codex.procedure",
+    "schedule_modes": ["on_demand"],
+    "input_schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "project_id": { "type": "string", "format": "uuid" },
+        "focus": { "type": "string", "maxLength": 2000, "title": "What to target", "description": "A product page, competitor, topic, or short explanation of the audience to reach.", "x-tin-ui": { "control": "textarea", "order": 10 } },
+        "domains": { "type": "array", "items": { "type": "string", "minLength": 3, "maxLength": 200 }, "maxItems": 6, "default": [], "title": "Optional domains to prioritize" },
+        "max_results": { "type": "integer", "minimum": 5, "maximum": 40, "default": 20, "title": "Maximum shortlist size" },
+        "preferred_channel": { "type": "string", "enum": ["email","twitter","linkedin"], "default": "email", "title": "Preferred outreach channel" }
+      },
+      "required": ["project_id"]
+    },
+    "procedure": {
+      "prompt_path": "PROMPT.md",
+      "skills_path": "skills",
+      "skill_files": ["skills/growth-blogger-outreach/SKILL.md"],
+      "entry_skill": "growth-blogger-outreach",
+      "workspace": { "kind": "project.state" },
+      "sandbox": { "profile": "isolated", "egress": "fenced", "timeout_seconds": 900 },
+      "output": {
+        "kind": "project.artifact",
+        "path_template": "reports/outreach/blogger_shortlist/{run_id}.md",
+        "media_type": "text/markdown",
+        "max_bytes": 120000
+      }
+    }
+  }
+}
