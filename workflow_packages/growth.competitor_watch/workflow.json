@@ -11,10 +11,10 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "project_id": { "type": "string", "format": "uuid" },
-        "targets": { "type": "array", "title": "Public pages to watch", "items": { "type": "string", "format": "uri", "minLength": 10, "maxLength": 2000 }, "minItems": 1, "maxItems": 40 },
-        "watch_types": { "type": "array", "items": { "type": "string", "enum": ["pricing","features","docs","changelog","blog","product_page","terms","other"] }, "default": ["pricing","features","product_page","changelog"], "title": "Change types to watch" },
-        "since": { "type": "string", "format": "date-time", "title": "Compare changes since" },
+        "project_id": { "type": "string", "format": "uuid", "maxLength": 64 },
+        "targets": { "type": "array", "title": "Public pages to watch", "items": { "type": "string", "format": "uri", "minLength": 10, "maxLength": 2000 }, "minItems": 1, "maxItems": 3 },
+        "watch_types": { "type": "array", "items": { "type": "string", "enum": ["pricing","features","docs","changelog","blog","product_page","terms","other"] }, "default": ["pricing","features","product_page","changelog"], "title": "Change types to watch", "maxItems": 8 },
+        "since": { "type": "string", "format": "date-time", "title": "Compare changes since", "maxLength": 64 },
         "notify_threshold": { "type": "integer", "minimum": 1, "maximum": 100, "default": 10, "title": "Maximum number of changes to report" }
       },
       "required": ["project_id", "targets"]
