@@ -1,0 +1,37 @@
+{
+  "package_format": "tin-workflow-package-v1",
+  "definition": {
+    "key": "growth.competitor_watch",
+    "title": "Competitor watch shortlist",
+    "description": "Find and prioritize competitor sites, authors, and channels to watch for product and market signals, and produce a concise monitoring shortlist.",
+    "version": "1.0.0",
+    "executor": "codex.procedure",
+    "schedule_modes": ["on_demand"],
+    "input_schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "project_id": { "type": "string", "format": "uuid" },
+        "focus": { "type": "string", "maxLength": 2000, "title": "What to target", "description": "A competitor domain, product page, or short explanation of the competitive signals to monitor.", "x-tin-ui": { "control": "textarea", "order": 10 } },
+        "domains": { "type": "array", "items": { "type": "string", "minLength": 3, "maxLength": 200 }, "maxItems": 6, "default": [], "title": "Optional domains to prioritize" },
+        "max_results": { "type": "integer", "minimum": 5, "maximum": 40, "default": 20, "title": "Maximum shortlist size" },
+        "preferred_channel": { "type": "string", "enum": ["website","twitter","rss"], "default": "website", "title": "Preferred monitoring channel" }
+      },
+      "required": ["project_id"]
+    },
+    "procedure": {
+      "prompt_path": "PROMPT.md",
+      "skills_path": "skills",
+      "skill_files": ["skills/competitor-watch/SKILL.md"],
+      "entry_skill": "competitor-watch",
+      "workspace": { "kind": "project.state" },
+      "sandbox": { "profile": "isolated", "egress": "fenced", "timeout_seconds": 900 },
+      "output": {
+        "kind": "project.artifact",
+        "path_template": "reports/monitoring/competitor_shortlist/{run_id}.md",
+        "media_type": "text/markdown",
+        "max_bytes": 120000
+      }
+    }
+  }
+}
