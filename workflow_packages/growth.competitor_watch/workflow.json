@@ -3,34 +3,69 @@
   "definition": {
     "key": "growth.competitor_watch",
     "title": "Watch competitor moves",
-    "description": "Detect and classify meaningful public changes on competitor pages, verify evidence, explain marketing implications, and produce concrete marketing actions.",
+    "description": "Check a small set of public competitor sources for meaningful product, pricing, positioning, and launch changes, then turn verified changes into a short marketing action brief.",
     "version": "1.0.0",
     "executor": "codex.procedure",
-    "schedule_modes": ["on_demand"],
+    "schedule_modes": [
+      "on_demand",
+      "weekly"
+    ],
     "input_schema": {
       "type": "object",
       "additionalProperties": false,
+      "required": [
+        "project_id",
+        "competitor_urls"
+      ],
       "properties": {
-        "project_id": { "type": "string", "format": "uuid", "maxLength": 64 },
-        "targets": { "type": "array", "title": "Public pages to watch", "items": { "type": "string", "format": "uri", "minLength": 10, "maxLength": 2000 }, "minItems": 1, "maxItems": 3 },
-        "watch_types": { "type": "array", "items": { "type": "string", "enum": ["pricing","features","docs","changelog","blog","product_page","terms","other"] }, "default": ["pricing","features","product_page","changelog"], "title": "Change types to watch", "maxItems": 8 },
-        "since": { "type": "string", "format": "date-time", "title": "Compare changes since", "maxLength": 64 },
-        "notify_threshold": { "type": "integer", "minimum": 1, "maximum": 100, "default": 10, "title": "Maximum number of changes to report" }
-      },
-      "required": ["project_id", "targets"]
+        "project_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "competitor_urls": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 3000,
+          "title": "Competitor sources",
+          "description": "One public HTTPS URL per line. Prefer pricing, product, changelog, release-notes, or homepage URLs. Maximum three competitors.",
+          "x-tin-ui": {
+            "control": "textarea",
+            "order": 10
+          }
+        },
+        "focus": {
+          "type": "string",
+          "maxLength": 1000,
+          "default": "",
+          "title": "What should matter most?",
+          "description": "Optional focus such as pricing, AI features, integrations, or positioning.",
+          "x-tin-ui": {
+            "control": "textarea",
+            "order": 20
+          }
+        }
+      }
     },
     "procedure": {
       "prompt_path": "PROMPT.md",
       "skills_path": "skills",
-      "skill_files": ["skills/competitor-watch/SKILL.md"],
+      "skill_files": [
+        "skills/competitor-watch/SKILL.md"
+      ],
       "entry_skill": "competitor-watch",
-      "workspace": { "kind": "project.state" },
-      "sandbox": { "profile": "isolated", "egress": "fenced", "timeout_seconds": 900 },
+      "workspace": {
+        "kind": "project.state"
+      },
+      "sandbox": {
+        "profile": "isolated",
+        "egress": "fenced",
+        "timeout_seconds": 900
+      },
       "output": {
         "kind": "project.artifact",
-        "path_template": "reports/monitoring/competitor_moves/{run_id}.md",
+        "path": "reports/COMPETITOR_WATCH.md",
         "media_type": "text/markdown",
-        "max_bytes": 200000
+        "max_bytes": 30000
       }
     }
   }
