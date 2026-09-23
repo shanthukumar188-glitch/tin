@@ -2,8 +2,8 @@
   "package_format": "tin-workflow-package-v1",
   "definition": {
     "key": "growth.competitor_watch",
-    "title": "Competitor watch shortlist",
-    "description": "Find and prioritize competitor sites, authors, and channels to watch for product and market signals, and produce a concise monitoring shortlist.",
+    "title": "Watch competitor moves",
+    "description": "Detect and classify meaningful public changes on competitor pages, verify evidence, explain marketing implications, and produce concrete marketing actions.",
     "version": "1.0.0",
     "executor": "codex.procedure",
     "schedule_modes": ["on_demand"],
@@ -12,12 +12,12 @@
       "additionalProperties": false,
       "properties": {
         "project_id": { "type": "string", "format": "uuid" },
-        "focus": { "type": "string", "maxLength": 2000, "title": "What to target", "description": "A competitor domain, product page, or short explanation of the competitive signals to monitor.", "x-tin-ui": { "control": "textarea", "order": 10 } },
-        "domains": { "type": "array", "items": { "type": "string", "minLength": 3, "maxLength": 200 }, "maxItems": 6, "default": [], "title": "Optional domains to prioritize" },
-        "max_results": { "type": "integer", "minimum": 5, "maximum": 40, "default": 20, "title": "Maximum shortlist size" },
-        "preferred_channel": { "type": "string", "enum": ["website","twitter","rss"], "default": "website", "title": "Preferred monitoring channel" }
+        "targets": { "type": "array", "title": "Public pages to watch", "items": { "type": "string", "format": "uri", "minLength": 10, "maxLength": 2000 }, "minItems": 1, "maxItems": 40 },
+        "watch_types": { "type": "array", "items": { "type": "string", "enum": ["pricing","features","docs","changelog","blog","product_page","terms","other"] }, "default": ["pricing","features","product_page","changelog"], "title": "Change types to watch" },
+        "since": { "type": "string", "format": "date-time", "title": "Compare changes since" },
+        "notify_threshold": { "type": "integer", "minimum": 1, "maximum": 100, "default": 10, "title": "Maximum number of changes to report" }
       },
-      "required": ["project_id"]
+      "required": ["project_id", "targets"]
     },
     "procedure": {
       "prompt_path": "PROMPT.md",
@@ -28,9 +28,9 @@
       "sandbox": { "profile": "isolated", "egress": "fenced", "timeout_seconds": 900 },
       "output": {
         "kind": "project.artifact",
-        "path_template": "reports/monitoring/competitor_shortlist/{run_id}.md",
+        "path_template": "reports/monitoring/competitor_moves/{run_id}.md",
         "media_type": "text/markdown",
-        "max_bytes": 120000
+        "max_bytes": 200000
       }
     }
   }

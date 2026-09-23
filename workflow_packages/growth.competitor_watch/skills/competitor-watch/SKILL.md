@@ -2,15 +2,16 @@
 name: competitor-watch
 description: Identify and prioritize competitor channels, sites and product pages to monitor for market signals.
 ---
+ 
+Read repository Files for baseline evidence and `context.inputs.targets` for the list of public pages to watch. For each target, perform the following and return a JSON object (one per change) inside a Markdown code block:
 
-Read the project Files for context and the supplied `focus`. Use public signals (release notes, blog posts, product changelogs, author pages, and RSS feeds) to judge signal value. Prefer sources that:
+- `target`: the URL or identifier watched
+- `change_summary`: a short sentence describing the change
+- `classification`: one of `pricing`,`features`,`docs`,`changelog`,`blog`,`product_page`,`terms`,`other`
+- `evidence`: the changed text snippet(s) and the page path where found
+- `comparison`: brief note of what changed compared to previous snapshot (if `context.inputs.since` provided)
+- `implication`: 1–3 sentence marketing implication
+- `actions`: an array of suggested actions, each with `{ "action": "...", "priority": "high|medium|low" }`
+- `confidence`: `high` | `medium` | `low`
 
-n- regularly publish product or market updates
-- have public changelogs, author pages, or RSS feeds
-- cover features and positioning closely related to the project's `focus`
-
-Produce a ranked shortlist with up to `context.inputs.max_results` entries. For each entry output a JSON object in a Markdown code block with keys: `name`, `type`, `justification`, `monitor_channel`, `monitor_hint`, `confidence`, `monitor_action`.
-
-`confidence` is one of `high`, `medium`, `low`. `monitor_hint` should be a publicly discoverable URL pattern (feed URL, author page, changelog path) and must not include private or unverified contacts.
-
-When using repository evidence (README, ABOUT, product pages), cite the file path(s) that supported your claim.
+`evidence` must avoid private contact details and prefer public URLs, changelog excerpts, and cited repository File paths. When making claims that use repository Files for corroboration, include file paths.
